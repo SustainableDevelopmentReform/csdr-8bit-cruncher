@@ -170,7 +170,7 @@ def convert_raster_to_rgb(input_path, output_path, band_r, band_g, band_b,
         
         # Print summary statistics
         print("\nConversion complete!")
-        print(f"Input: {num_bands} bands, {src.dtype}")
+        print(f"Input: {num_bands} bands, {src.dtypes[0]}")  # Get dtype from first band
         print(f"Output: 3 bands (RGB), uint8")
         print(f"Dimensions: {src.width} x {src.height}")
         if src.crs:

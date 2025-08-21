@@ -17,6 +17,9 @@ A lightweight Python script that converts multi-band geospatial raster images (1
 ### Python Version
 - Python 3.7 or higher
 
+### CLI environment. 
+- use `python` vs `python3` and `pip` vs `pip3` depending on your installs/environments 
+
 ### Required Libraries
 
 ```bash

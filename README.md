@@ -21,6 +21,11 @@ A lightweight Python script that converts multi-band geospatial raster images (1
 ### Script file
 - You can just download the the python script `raster_to_rgb.py`
 - Otherwise clone this repo: https://github.com/SustainableDevelopmentReform/csdr-8bit-cruncher.git
+```bash
+git clone https://github.com/SustainableDevelopmentReform/csdr-8bit-cruncher
+# or
+gh repo clone SustainableDevelopmentReform/csdr-8bit-cruncher
+```
 
 ### CLI environment
 - use `python` vs `python3` and `pip` vs `pip3` depending on your installs/environments 

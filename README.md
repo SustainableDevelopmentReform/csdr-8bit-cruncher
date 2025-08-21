@@ -1,6 +1,6 @@
 # Raster to RGB Converter
 
-A lightweight Python script that converts multi-band geospatial raster images (16-bit or float) into 8-bit RGB GeoTIFFs suitable for web mapping and GIS dashboard applications.
+A lightweight Python script that converts multi-band geospatial raster images (16-bit or float) into 8-bit RGB GeoTIFFs suitable for web mapping and GIS dashboard applications. It's a CLI tool that wil run directly in your terminal/shell (tested on mac, but should work on Windows).
 
 ## Features
 
@@ -16,6 +16,11 @@ A lightweight Python script that converts multi-band geospatial raster images (1
 
 ### Python Version
 - Python 3.7 or higher
+- Download Python if you don't have it: https://www.python.org/downloads/
+
+### Script file
+- You can just download the the python script `raster_to_rgb.py`
+- Otherwise clone this repo: https://github.com/SustainableDevelopmentReform/csdr-8bit-cruncher.git
 
 ### CLI environment
 - use `python` vs `python3` and `pip` vs `pip3` depending on your installs/environments 

@@ -12,6 +12,32 @@ import os
 import numpy as np
 import rasterio
 from rasterio.warp import calculate_default_transform, reproject, Resampling
+from PIL import Image
+
+
+def create_png_preview(scaled_data, output_path):
+    """
+    Create a PNG preview image from the scaled RGB data.
+    
+    Args:
+        scaled_data: numpy array of shape (3, height, width) with uint8 values
+        output_path: Path to the output GeoTIFF (used to derive PNG path)
+    
+    Returns:
+        Path to the created PNG file
+    """
+    # Replace extension with .png
+    base_path = os.path.splitext(output_path)[0]
+    png_path = base_path + '.png'
+    
+    # Transpose from (bands, height, width) to (height, width, bands)
+    rgb_array = np.transpose(scaled_data, (1, 2, 0))
+    
+    # Create PIL Image and save
+    img = Image.fromarray(rgb_array, mode='RGB')
+    img.save(png_path, 'PNG', optimize=True)
+    
+    return png_path
 
 
 def create_world_file(transform, output_path):
@@ -87,7 +113,7 @@ def scale_to_8bit(bands_data, nodata=None):
 
 
 def convert_raster_to_rgb(input_path, output_path, band_r, band_g, band_b, 
-                         min_value=None, max_value=None):
+                         min_value=None, max_value=None, create_png=True):
     """
     Convert a multi-band raster to 8-bit RGB GeoTIFF.
     
@@ -99,6 +125,7 @@ def convert_raster_to_rgb(input_path, output_path, band_r, band_g, band_b,
         band_b: Band number for blue channel (1-indexed)
         min_value: Optional minimum value for scaling
         max_value: Optional maximum value for scaling
+        create_png: Whether to create a PNG preview (default: True)
     """
     # Open the input raster
     with rasterio.open(input_path) as src:
@@ -168,6 +195,11 @@ def convert_raster_to_rgb(input_path, output_path, band_r, band_g, band_b,
         tfw_path = create_world_file(src.transform, output_path)
         print(f"Created world file: {tfw_path}")
         
+        # Create PNG preview if requested
+        if create_png:
+            png_path = create_png_preview(scaled_data, output_path)
+            print(f"Created PNG preview: {png_path}")
+        
         # Print summary statistics
         print("\nConversion complete!")
         print(f"Input: {num_bands} bands, {src.dtypes[0]}")  # Get dtype from first band
@@ -183,8 +215,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Convert bands 4, 3, 2 to RGB
+  # Convert bands 4, 3, 2 to RGB (creates GeoTIFF, TFW, and PNG)
   python raster_to_rgb.py input.tif output.tif -r 4 -g 3 -b 2
+  
+  # Convert without creating PNG preview
+  python raster_to_rgb.py input.tif output.tif -r 1 -g 2 -b 3 --no-png
   
   # Use custom min/max values for scaling
   python raster_to_rgb.py input.tif output.tif -r 1 -g 2 -b 3 --min 0 --max 10000
@@ -209,6 +244,10 @@ Examples:
     parser.add_argument('--max', type=float, default=None,
                        help='Maximum value for scaling (default: auto from data)')
     
+    # PNG export option
+    parser.add_argument('--no-png', action='store_true',
+                       help='Disable PNG preview generation (PNG is created by default)')
+    
     args = parser.parse_args()
     
     # Validate input file exists
@@ -229,7 +268,8 @@ Examples:
             args.green,
             args.blue,
             args.min,
-            args.max
+            args.max,
+            create_png=not args.no_png  # Invert the flag since --no-png disables
         )
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

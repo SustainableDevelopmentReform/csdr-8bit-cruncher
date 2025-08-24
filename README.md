@@ -9,6 +9,7 @@ A lightweight Python script that converts multi-band geospatial raster images (1
 - Global min/max scaling across all three selected bands
 - Preserves geospatial metadata (CRS, georeferencing)
 - Generates accompanying `.tfw` world file
+- Creates PNG preview image for web/dashboard use (can be disabled)
 - Optional custom min/max values for scaling
 - LZW compression for smaller output files
 
@@ -37,13 +38,13 @@ python3 -m ensurepip --upgrade
 ### Required Libraries
 
 ```bash
-pip install rasterio numpy
+pip install rasterio numpy pillow
 ```
 
 Or using conda:
 
 ```bash
-conda install -c conda-forge rasterio numpy
+conda install -c conda-forge rasterio numpy pillow
 ```
 
 ### Full Installation Example
@@ -54,10 +55,11 @@ python -m venv raster_env
 source raster_env/bin/activate  # On Windows: raster_env\Scripts\activate
 
 # Install required packages
-pip install rasterio numpy
+pip install rasterio numpy pillow
 
 # Verify installation
 python -c "import rasterio; print(f'Rasterio version: {rasterio.__version__}')"
+python -c "import PIL; print(f'Pillow version: {PIL.__version__}')"
 ```
 
 ## Usage
@@ -77,6 +79,7 @@ python raster_to_rgb.py <input_file> <output_file> -r <red_band> -g <green_band>
 - `-b, --blue`: Band number for the blue channel (1-indexed)
 - `--min`: (Optional) Minimum value for scaling
 - `--max`: (Optional) Maximum value for scaling
+- `--no-png`: (Optional) Disable PNG preview generation (PNG is created by default)
 
 ### Examples
 
@@ -85,6 +88,17 @@ Convert a Landsat-style image using bands 4 (NIR), 3 (Red), and 2 (Green) for fa
 
 ```bash
 python raster_to_rgb.py example.tiff example_rgb.tiff -r 4 -g 3 -b 2
+```
+
+This creates:
+- `example_rgb.tiff` - 8-bit RGB GeoTIFF
+- `example_rgb.tfw` - World file
+- `example_rgb.png` - PNG preview image
+
+Or without a PNG preview: 
+
+```bash
+python raster_to_rgb.py example.tiff example_rgb.tiff -r 4 -g 3 -b 2 --no-png
 ```
 
 #### Example 2: True Color Composite
@@ -126,6 +140,14 @@ For each conversion, the script generates two files:
 
 1. **GeoTIFF file** (`.tiff` or `.tif`): The 8-bit RGB image with embedded geospatial information
 2. **World file** (`.tfw`): A text file containing georeferencing information for GIS compatibility
+3. PNG file (`.png`): A portable preview image for web dashboards and quick viewing (can be disabled with `--no-png`)
+
+### Why PNG Preview?
+The PNG preview is useful for:
+- Web mapping applications that don't support GeoTIFF
+- Quick visual inspection without GIS software
+- Dashboard integration and thumbnails
+- Sharing with non-GIS users
 
 ## Tips and Best Practices
 
